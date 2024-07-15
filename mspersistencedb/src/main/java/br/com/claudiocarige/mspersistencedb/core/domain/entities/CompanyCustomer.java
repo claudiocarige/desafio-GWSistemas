@@ -1,4 +1,4 @@
-package br.com.claudiocarige.mspersistencedb.core.domain;
+package br.com.claudiocarige.mspersistencedb.core.domain.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
