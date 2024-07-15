@@ -1,6 +1,7 @@
 spring:
   application:
     name: mspersistencedb
-
+  profiles:
+    active: test
 server:
     port: 8080
