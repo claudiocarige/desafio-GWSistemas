@@ -13,28 +13,35 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>mspersistencedb</name>
 	<description>Desafio de projeto para empresa GW Sistemas - Microserviço para persistir os dados no banco</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
 	<developers>
-		<developer/>
+		<developer>
+			<name>Claudio Carige</name>
+			<email>ccarige@gmail.com</email>
+			<url>https://www.linkedin.com/in/claudiocarige</url>
+			<roles>
+				<role>Full Stack Developer</role>
+			</roles>
+			<timezone>UTC-3</timezone>
+		</developer>
 	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
 	<properties>
 		<java.version>17</java.version>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
