@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/controledecargas.iml" filepath="$PROJECT_DIR$/.idea/controledecargas.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mspersistencedb/mspersistencedb.iml" filepath="$PROJECT_DIR$/mspersistencedb/mspersistencedb.iml" />
     </modules>
   </component>
 </project>
