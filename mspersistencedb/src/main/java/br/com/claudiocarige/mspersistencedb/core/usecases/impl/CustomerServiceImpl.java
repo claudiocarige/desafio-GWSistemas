@@ -7,6 +7,7 @@ import br.com.claudiocarige.mspersistencedb.core.domain.entities.IndividualCusto
 import br.com.claudiocarige.mspersistencedb.core.dtos.CompanyCustomerDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.CustomerResponseDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.IndividualCustomerDTO;
+import br.com.claudiocarige.mspersistencedb.core.exceptions.NoSuchElementException;
 import br.com.claudiocarige.mspersistencedb.core.usecases.CustomerService;
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.AddressRepository;
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.CompanyCustomerRepository;
@@ -15,7 +16,6 @@ import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postg
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 
 @Service
