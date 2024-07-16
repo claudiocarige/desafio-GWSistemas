@@ -25,6 +25,9 @@ public class Product {
 
     private double volume;
 
+    //TODO inserir atributo posição do produto para busca no armazem
+    //TODO inserir atributo de quantidade em estoque
+
     @Column( precision = 10, scale = 2 )
     private BigDecimal value;
 
