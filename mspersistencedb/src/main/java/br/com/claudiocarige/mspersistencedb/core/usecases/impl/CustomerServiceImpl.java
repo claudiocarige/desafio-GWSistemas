@@ -40,7 +40,14 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerResponseDTO createIndividualCustomer( IndividualCustomerDTO individualCustomerDTO ) {
 
-        return null;
+        individualCustomerDTO.setId(null);
+        Address savedAddress = addressRepository.save(individualCustomerDTO.getAddress());
+        IndividualCustomer individualCustomer = convertClassDTOService
+                .convertIndividualCustomerDTOToEntite(individualCustomerDTO);
+        individualCustomer.setAddress(savedAddress);
+        individualCustomer = individualCustomerRepository.save(individualCustomer);
+        return convertClassDTOService.convertIndividualCustomerToCustomerResponseDTO( individualCustomer );
+
     }
 
     @Override
