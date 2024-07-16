@@ -224,6 +224,25 @@ class CustomerServiceImplTest {
 
     }
 
+    @Test
+    @DisplayName( "Should update a CompanyCustomer" )
+    void shouldUpdateACompanyCustomer(){
+
+        when( companyCustomerRepository.save( companyCustomer ) ).thenReturn( companyCustomer );
+
+        when( convertClassDTOService.convertCompanyCustomerDTOToEntite( companyCustomerDTO ) )
+                .thenReturn( companyCustomer );
+        when( convertClassDTOService.convertCompanyCustomerToCustomerResponseDTO( companyCustomer ) )
+                .thenReturn( customerResponseIndividualDTO );
+
+        CustomerResponseDTO result = customerService.updateCompanyCustomer( companyCustomerDTO );
+
+        assertNotNull( result );
+        assertEquals( companyCustomer.getCnpj(), result.getCpfOrCnpj() );
+        assertEquals( companyCustomer.getPrincipalEmail(), result.getPrincipalEmail() );
+
+    }
+
     private void startEntities() {
 
         individualCustomer = oneIndividualCustomer().now();
