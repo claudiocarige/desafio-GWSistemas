@@ -22,4 +22,15 @@ public class GlobalExceptionHandler {
         log.error( String.format( "[ ERROR ] IllegalArgumentException Classs : %S", error.getMessage() ) );
         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).body( error );
     }
+
+
+    @ExceptionHandler( NoSuchElementException.class)
+    public ResponseEntity< StandardError > noSuchElementException( NoSuchElementException ex,
+                                                                     HttpServletRequest request ) {
+
+        StandardError error = new StandardError( System.currentTimeMillis(), HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(), request.getRequestURI() );
+        log.error( String.format( "[ ERROR ] NoSuchElementException Classs : %S", error.getMessage() ) );
+        return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( error );
+    }
 }
