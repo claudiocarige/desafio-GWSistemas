@@ -2,6 +2,7 @@ package br.com.claudiocarige.mspersistencedb.core.usecases.impl;
 
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.Address;
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.CompanyCustomer;
+import br.com.claudiocarige.mspersistencedb.core.domain.entities.Customers;
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.IndividualCustomer;
 import br.com.claudiocarige.mspersistencedb.core.dtos.CompanyCustomerDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.CustomerResponseDTO;
@@ -9,10 +10,12 @@ import br.com.claudiocarige.mspersistencedb.core.dtos.IndividualCustomerDTO;
 import br.com.claudiocarige.mspersistencedb.core.usecases.CustomerService;
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.AddressRepository;
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.CompanyCustomerRepository;
+import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.CustomerRepository;
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.IndividualCustomerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 @Service
@@ -23,17 +26,20 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CompanyCustomerRepository companyCustomerRepository;
 
+    private final CustomerRepository customerRepository;
+
     private final AddressRepository addressRepository;
 
     private final ConvertClassToDTOService convertClassDTOService;
 
 
     public CustomerServiceImpl( IndividualCustomerRepository individualCustomerRepository,
-                                CompanyCustomerRepository companyCustomerRepository,
+                                CompanyCustomerRepository companyCustomerRepository, CustomerRepository customerRepository,
                                 AddressRepository addressRepository, ConvertClassToDTOService convertClassDTOService ) {
 
         this.individualCustomerRepository = individualCustomerRepository;
         this.companyCustomerRepository = companyCustomerRepository;
+        this.customerRepository = customerRepository;
         this.addressRepository = addressRepository;
         this.convertClassDTOService = convertClassDTOService;
     }
@@ -77,7 +83,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerResponseDTO findCustomerById( Long customerId ) {
 
-        return null;
+        Customers customer = customerRepository.findById( customerId )
+                                        .orElseThrow( () -> new NoSuchElementException("Customer not found.") );
+        if(customer instanceof IndividualCustomer){
+            return convertClassDTOService
+                    .convertIndividualCustomerToCustomerResponseDTO( (IndividualCustomer ) customer );
+        }
+        return convertClassDTOService.convertCompanyCustomerToCustomerResponseDTO( (CompanyCustomer ) customer);
     }
 
     @Override
