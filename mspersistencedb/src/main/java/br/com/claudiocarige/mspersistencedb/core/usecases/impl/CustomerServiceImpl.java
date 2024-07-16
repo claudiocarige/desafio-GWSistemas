@@ -69,9 +69,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponseDTO updateIndividualCustomer( IndividualCustomerDTO individualCustomer ) {
+    public CustomerResponseDTO updateIndividualCustomer( IndividualCustomerDTO individualCustomerDTO ) {
 
-        return null;
+        return convertClassDTOService
+                   .convertIndividualCustomerToCustomerResponseDTO( individualCustomerRepository.save(
+                        convertClassDTOService.convertIndividualCustomerDTOToEntite( individualCustomerDTO ) ) );
     }
 
     @Override
