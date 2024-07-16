@@ -172,9 +172,8 @@ class CustomerServiceImplTest {
 
         when( customerRepository.findById(1L ) ).thenReturn( Optional.empty() );
 
-        NoSuchElementException exception = assertThrows( NoSuchElementException.class, () -> {
-            customerService.findCustomerById( 1L );
-        } );
+        NoSuchElementException exception = assertThrows( NoSuchElementException.class, () ->
+            customerService.findCustomerById( 1L ));
 
         assertEquals( "Customer not found.", exception.getMessage() );
         verify( customerRepository, times( 1 ) ).findById( 1L );
