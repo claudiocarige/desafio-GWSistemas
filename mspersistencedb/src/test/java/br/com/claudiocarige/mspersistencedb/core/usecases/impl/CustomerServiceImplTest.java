@@ -2,12 +2,14 @@ package br.com.claudiocarige.mspersistencedb.core.usecases.impl;
 
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.Address;
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.CompanyCustomer;
+import br.com.claudiocarige.mspersistencedb.core.domain.entities.Customers;
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.IndividualCustomer;
 import br.com.claudiocarige.mspersistencedb.core.dtos.CompanyCustomerDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.CustomerResponseDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.IndividualCustomerDTO;
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.AddressRepository;
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.CompanyCustomerRepository;
+import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.CustomerRepository;
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.IndividualCustomerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,13 +19,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import static br.com.claudiocarige.mspersistencedb.core.domain.builders.CompanyCustomerBuilder.oneCompanyCustomer;
 import static br.com.claudiocarige.mspersistencedb.core.domain.builders.IndividualCustomerBuilder.oneIndividualCustomer;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith( MockitoExtension.class )
@@ -54,6 +57,9 @@ class CustomerServiceImplTest {
     private AddressRepository addressRepository;
 
     @Mock
+    private CustomerRepository customerRepository;
+
+    @Mock
     private ConvertClassToDTOService convertClassDTOService;
 
     @InjectMocks
@@ -73,9 +79,9 @@ class CustomerServiceImplTest {
         when( individualCustomerRepository.save( individualCustomer ) ).thenReturn( individualCustomer );
 
         when( convertClassDTOService.convertIndividualCustomerDTOToEntite( individualCustomerDTO ) )
-                                                                                    .thenReturn( individualCustomer );
+                .thenReturn( individualCustomer );
         when( convertClassDTOService.convertIndividualCustomerToCustomerResponseDTO( individualCustomer ) )
-                                                                                   .thenReturn( customerResponseIndividualDTO );
+                .thenReturn( customerResponseIndividualDTO );
 
         CustomerResponseDTO result = customerService.createIndividualCustomer( individualCustomerDTO );
 
@@ -96,7 +102,8 @@ class CustomerServiceImplTest {
 
     @Test
     @DisplayName( "Should create a new CompanyCustomer." )
-    void shouldCreateANewCompanyCustomer(){
+    void shouldCreateANewCompanyCustomer() {
+
         when( addressRepository.save( any( Address.class ) ) ).thenReturn( address );
         when( companyCustomerRepository.save( companyCustomer ) ).thenReturn( companyCustomer );
 
@@ -120,6 +127,59 @@ class CustomerServiceImplTest {
         assertEquals( companyCustomer.getWhatsapp(), result.getWhatsapp() );
         assertEquals( companyCustomer.getResponsibleEmployee(), result.getResponsibleEmployee() );
         assertEquals( companyCustomer.getCustomerName(), result.getCustomerName() );
+    }
+
+    @Test
+    @DisplayName( "Should return a IndviIndividualCustomer By Id" )
+    public void shouldReturnAIndividualCustomerById() {
+
+        Customers customer = oneIndividualCustomer().now();
+        when( customerRepository.findById( 1L ) ).thenReturn( Optional.of( customer ) );
+        when( convertClassDTOService.convertIndividualCustomerToCustomerResponseDTO( individualCustomer ) )
+                .thenReturn( customerResponseIndividualDTO );
+
+        CustomerResponseDTO result = customerService.findCustomerById( 1L );
+
+        assertNotNull( result );
+        assertEquals( customerResponseIndividualDTO, result );
+        verify( customerRepository, times( 1 ) ).findById( 1L );
+        verify( convertClassDTOService, times( 1 ) ).convertIndividualCustomerToCustomerResponseDTO( individualCustomer );
+        verify( convertClassDTOService, never() ).convertCompanyCustomerToCustomerResponseDTO( any() );
+
+    }
+
+    @Test
+    @DisplayName( "Should return a CompanyCustomer By Id" )
+    public void shouldReturnACompanyCustomerById() {
+
+        Customers customer = oneCompanyCustomer().now();
+        when( customerRepository.findById( 1L ) ).thenReturn( Optional.of( companyCustomer ) );
+        when( convertClassDTOService.convertCompanyCustomerToCustomerResponseDTO( companyCustomer ) )
+                .thenReturn( customerResponseCompanyDTO );
+
+        CustomerResponseDTO result = customerService.findCustomerById( 1L );
+
+        assertNotNull( result );
+        assertEquals( customerResponseCompanyDTO, result );
+        verify( customerRepository, times( 1 ) ).findById( 1L );
+        verify( convertClassDTOService, times( 1 ) ).convertCompanyCustomerToCustomerResponseDTO( companyCustomer );
+        verify( convertClassDTOService, never() ).convertIndividualCustomerToCustomerResponseDTO( any() );
+    }
+
+    @Test
+    @DisplayName( "Should return a NoSuchElementException" )
+    public void shouldReturnANoSuchElementException() {
+
+        when( customerRepository.findById(1L ) ).thenReturn( Optional.empty() );
+
+        NoSuchElementException exception = assertThrows( NoSuchElementException.class, () -> {
+            customerService.findCustomerById( 1L );
+        } );
+
+        assertEquals( "Customer not found.", exception.getMessage() );
+        verify( customerRepository, times( 1 ) ).findById( 1L );
+        verify( convertClassDTOService, never() ).convertIndividualCustomerToCustomerResponseDTO( any() );
+        verify( convertClassDTOService, never() ).convertCompanyCustomerToCustomerResponseDTO( any() );
     }
 
     private void startEntities() {
