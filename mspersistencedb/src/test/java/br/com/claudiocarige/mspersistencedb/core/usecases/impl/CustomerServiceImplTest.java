@@ -19,6 +19,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -170,15 +172,37 @@ class CustomerServiceImplTest {
     @DisplayName( "Should return a NoSuchElementException" )
     public void shouldReturnANoSuchElementException() {
 
-        when( customerRepository.findById(1L ) ).thenReturn( Optional.empty() );
+        when( customerRepository.findById( 1L ) ).thenReturn( Optional.empty() );
 
         NoSuchElementException exception = assertThrows( NoSuchElementException.class, () ->
-            customerService.findCustomerById( 1L ));
+                customerService.findCustomerById( 1L ) );
 
         assertEquals( "Customer not found.", exception.getMessage() );
         verify( customerRepository, times( 1 ) ).findById( 1L );
         verify( convertClassDTOService, never() ).convertIndividualCustomerToCustomerResponseDTO( any() );
         verify( convertClassDTOService, never() ).convertCompanyCustomerToCustomerResponseDTO( any() );
+    }
+
+
+    @Test
+    @DisplayName( "Should return a list of CustomerResponseDTO" )
+    void shouldReturnAListOfCustomerResponseDTO() {
+
+        when( customerRepository.findAll() ).thenReturn( Arrays.asList( individualCustomer, companyCustomer ) );
+        when( convertClassDTOService.convertIndividualCustomerToCustomerResponseDTO( individualCustomer ) )
+                .thenReturn( customerResponseIndividualDTO );
+        when( convertClassDTOService.convertCompanyCustomerToCustomerResponseDTO( companyCustomer ) )
+                .thenReturn( customerResponseCompanyDTO );
+
+        List< CustomerResponseDTO > result = customerService.listAllCustomers();
+
+        assertEquals( 2, result.size() );
+        assertEquals( CustomerResponseDTO.class, result.get( 0 ).getClass() );
+        assertEquals( CustomerResponseDTO.class, result.get( 1 ).getClass() );
+        assertEquals( companyCustomer.getCnpj(), result.get( 1 ).getCpfOrCnpj() );
+        verify( customerRepository, times( 1 ) ).findAll();
+        verify( convertClassDTOService, times( 1 ) ).convertIndividualCustomerToCustomerResponseDTO( individualCustomer );
+        verify( convertClassDTOService, times( 1 ) ).convertCompanyCustomerToCustomerResponseDTO( companyCustomer );
     }
 
     private void startEntities() {

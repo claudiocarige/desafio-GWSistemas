@@ -94,8 +94,15 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List< CustomerResponseDTO > listAllCustomers() {
-
-        return List.of();
+        List<Customers> customersList = customerRepository.findAll();
+        return customersList.stream().map(obj -> {
+            if (obj instanceof IndividualCustomer) {
+                return convertClassDTOService
+                        .convertIndividualCustomerToCustomerResponseDTO((IndividualCustomer) obj);
+            }
+            return convertClassDTOService
+                    .convertCompanyCustomerToCustomerResponseDTO((CompanyCustomer) obj);
+            }).toList();
     }
 
 }
