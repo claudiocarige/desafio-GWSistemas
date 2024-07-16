@@ -1,6 +1,7 @@
 package br.com.claudiocarige.mspersistencedb.core.usecases.impl;
 
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.Address;
+import br.com.claudiocarige.mspersistencedb.core.domain.entities.CompanyCustomer;
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.IndividualCustomer;
 import br.com.claudiocarige.mspersistencedb.core.dtos.CompanyCustomerDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.CustomerResponseDTO;
@@ -52,8 +53,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerResponseDTO createCompanyCustomer( CompanyCustomerDTO companyCustomerDTO ) {
-
-        return null;
+        companyCustomerDTO.setId(null);
+        Address savedAddress = addressRepository.save(companyCustomerDTO.getAddress());
+        CompanyCustomer companyCustomer = convertClassDTOService
+                .convertCompanyCustomerDTOToEntite(companyCustomerDTO);
+        companyCustomer.setAddress(savedAddress);
+        companyCustomer = companyCustomerRepository.save( companyCustomer );
+        return convertClassDTOService.convertCompanyCustomerToCustomerResponseDTO( companyCustomer );
     }
 
     @Override
