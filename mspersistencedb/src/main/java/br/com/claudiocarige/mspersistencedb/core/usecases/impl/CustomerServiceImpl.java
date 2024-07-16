@@ -47,23 +47,24 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerResponseDTO createIndividualCustomer( IndividualCustomerDTO individualCustomerDTO ) {
 
-        individualCustomerDTO.setId(null);
-        Address savedAddress = addressRepository.save(individualCustomerDTO.getAddress());
+        individualCustomerDTO.setId( null );
+        Address savedAddress = addressRepository.save( individualCustomerDTO.getAddress() );
         IndividualCustomer individualCustomer = convertClassDTOService
-                .convertIndividualCustomerDTOToEntite(individualCustomerDTO);
-        individualCustomer.setAddress(savedAddress);
-        individualCustomer = individualCustomerRepository.save(individualCustomer);
+                .convertIndividualCustomerDTOToEntite( individualCustomerDTO );
+        individualCustomer.setAddress( savedAddress );
+        individualCustomer = individualCustomerRepository.save( individualCustomer );
         return convertClassDTOService.convertIndividualCustomerToCustomerResponseDTO( individualCustomer );
 
     }
 
     @Override
     public CustomerResponseDTO createCompanyCustomer( CompanyCustomerDTO companyCustomerDTO ) {
-        companyCustomerDTO.setId(null);
-        Address savedAddress = addressRepository.save(companyCustomerDTO.getAddress());
+
+        companyCustomerDTO.setId( null );
+        Address savedAddress = addressRepository.save( companyCustomerDTO.getAddress() );
         CompanyCustomer companyCustomer = convertClassDTOService
-                .convertCompanyCustomerDTOToEntite(companyCustomerDTO);
-        companyCustomer.setAddress(savedAddress);
+                .convertCompanyCustomerDTOToEntite( companyCustomerDTO );
+        companyCustomer.setAddress( savedAddress );
         companyCustomer = companyCustomerRepository.save( companyCustomer );
         return convertClassDTOService.convertCompanyCustomerToCustomerResponseDTO( companyCustomer );
     }
@@ -77,34 +78,37 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponseDTO updateCompanyCustomer( CompanyCustomerDTO companyCustomer ) {
+    public CustomerResponseDTO updateCompanyCustomer( CompanyCustomerDTO companyCustomerDTO ) {
 
-        return null;
+        return convertClassDTOService
+                   .convertCompanyCustomerToCustomerResponseDTO( companyCustomerRepository.save(
+                        convertClassDTOService.convertCompanyCustomerDTOToEntite( companyCustomerDTO ) ) );
     }
 
     @Override
     public CustomerResponseDTO findCustomerById( Long customerId ) {
 
         Customers customer = customerRepository.findById( customerId )
-                                        .orElseThrow( () -> new NoSuchElementException("Customer not found.") );
-        if(customer instanceof IndividualCustomer){
+                .orElseThrow( () -> new NoSuchElementException( "Customer not found." ) );
+        if( customer instanceof IndividualCustomer ) {
             return convertClassDTOService
-                    .convertIndividualCustomerToCustomerResponseDTO( (IndividualCustomer ) customer );
+                    .convertIndividualCustomerToCustomerResponseDTO( ( IndividualCustomer ) customer );
         }
-        return convertClassDTOService.convertCompanyCustomerToCustomerResponseDTO( (CompanyCustomer ) customer);
+        return convertClassDTOService.convertCompanyCustomerToCustomerResponseDTO( ( CompanyCustomer ) customer );
     }
 
     @Override
     public List< CustomerResponseDTO > listAllCustomers() {
-        List<Customers> customersList = customerRepository.findAll();
-        return customersList.stream().map(obj -> {
-            if (obj instanceof IndividualCustomer) {
+
+        List< Customers > customersList = customerRepository.findAll();
+        return customersList.stream().map( obj -> {
+            if( obj instanceof IndividualCustomer ) {
                 return convertClassDTOService
-                        .convertIndividualCustomerToCustomerResponseDTO((IndividualCustomer) obj);
+                        .convertIndividualCustomerToCustomerResponseDTO( ( IndividualCustomer ) obj );
             }
             return convertClassDTOService
-                    .convertCompanyCustomerToCustomerResponseDTO((CompanyCustomer) obj);
-            }).toList();
+                    .convertCompanyCustomerToCustomerResponseDTO( ( CompanyCustomer ) obj );
+        } ).toList();
     }
 
 }
