@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.*;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -29,6 +30,17 @@ public class CompanyCustomer extends Customers {
         this.cnpj = cnpj;
         this.corporateName = corporateName;
     }
+
+    public CompanyCustomer( Long id,
+                            String cnpj,
+                            String corporateName,
+                            String customerName,
+                            Address address,
+                            String phoneNumber,
+                            String whatsapp,
+                            String principalEmail,
+                            String responsibleEmployee,
+                            List< String> emailList ) { }
 
     @Override
     public boolean equals( Object o ) {

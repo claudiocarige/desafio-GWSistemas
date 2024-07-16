@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.*;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -26,6 +27,16 @@ public class IndividualCustomer extends Customers {
         }
         this.cpf = cpf;
     }
+
+    public IndividualCustomer( String cpf,
+                               Long id,
+                               String customerName,
+                               Address address,
+                               String phoneNumber,
+                               String whatsapp,
+                               String principalEmail,
+                               String responsibleEmployee,
+                               List< String> emailList ) { }
 
     @Override
     public boolean equals( Object o ) {
