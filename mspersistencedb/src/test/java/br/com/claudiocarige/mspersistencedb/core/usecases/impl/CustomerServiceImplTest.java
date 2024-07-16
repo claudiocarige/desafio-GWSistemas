@@ -205,6 +205,25 @@ class CustomerServiceImplTest {
         verify( convertClassDTOService, times( 1 ) ).convertCompanyCustomerToCustomerResponseDTO( companyCustomer );
     }
 
+    @Test
+    @DisplayName( "Should update a IndividualCustomer" )
+    void shouldUpdateAIndividualCustomer(){
+
+        when( individualCustomerRepository.save( individualCustomer ) ).thenReturn( individualCustomer );
+
+        when( convertClassDTOService.convertIndividualCustomerDTOToEntite( individualCustomerDTO ) )
+                .thenReturn( individualCustomer );
+        when( convertClassDTOService.convertIndividualCustomerToCustomerResponseDTO( individualCustomer ) )
+                .thenReturn( customerResponseIndividualDTO );
+
+        CustomerResponseDTO result = customerService.updateIndividualCustomer( individualCustomerDTO );
+
+        assertNotNull( result );
+        assertEquals( individualCustomer.getCpf(), result.getCpfOrCnpj() );
+        assertEquals( individualCustomer.getPrincipalEmail(), result.getPrincipalEmail() );
+
+    }
+
     private void startEntities() {
 
         individualCustomer = oneIndividualCustomer().now();
