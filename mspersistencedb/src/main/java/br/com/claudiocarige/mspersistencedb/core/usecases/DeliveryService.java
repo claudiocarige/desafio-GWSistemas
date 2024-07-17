@@ -5,6 +5,8 @@ import br.com.claudiocarige.mspersistencedb.core.domain.enums.DeliveryStatus;
 import br.com.claudiocarige.mspersistencedb.core.dtos.RequestDelivery;
 import br.com.claudiocarige.mspersistencedb.core.dtos.ResponseOfSolicitation;
 
+import java.util.List;
+
 
 public interface DeliveryService {
 
@@ -13,5 +15,9 @@ public interface DeliveryService {
     DeliveryStatus carryOutDelivery( String passwordDelivery, Long deliveryId ); //Realizar entrega
 
     Boolean CheckIfDeliveryIsCompleted( Long deliveryId );
+
+    Delivery findDeliveryById( Long id );
+
+    List<Delivery> findAllDeliveries();
 
 }
