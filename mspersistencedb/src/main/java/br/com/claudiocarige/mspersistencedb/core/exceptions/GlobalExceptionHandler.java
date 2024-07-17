@@ -33,4 +33,15 @@ public class GlobalExceptionHandler {
         log.error( String.format( "[ ERROR ] NoSuchElementException Classs : %S", error.getMessage() ) );
         return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( error );
     }
+
+    @ExceptionHandler( InsufficientStockException.class)
+    public ResponseEntity< StandardError > insufficientStockException( InsufficientStockException ex,
+                                                                   HttpServletRequest request ) {
+
+        StandardError error = new StandardError( System.currentTimeMillis(), HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(), request.getRequestURI() );
+        log.error( String.format( "[ ERROR ] NoSuchElementException Classs : %S", error.getMessage() ) );
+        return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( error );
+    }
+
 }
