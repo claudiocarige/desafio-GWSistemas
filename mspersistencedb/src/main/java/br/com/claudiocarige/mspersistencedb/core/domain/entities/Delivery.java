@@ -2,10 +2,15 @@ package br.com.claudiocarige.mspersistencedb.core.domain.entities;
 
 
 import br.com.claudiocarige.mspersistencedb.core.domain.enums.DeliveryStatus;
+import br.com.claudiocarige.mspersistencedb.core.exceptions.NoSuchElementException;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
 
 
 @Getter
@@ -28,12 +33,42 @@ public class Delivery {
     @JoinColumn( name = "recipient_id" )
     private Customers recipient;
 
-    @ManyToOne
-    @JoinColumn( name = "product_id" )
-    private Product product;
-
+    //TODO alterar nome na tabela para statusDelivery
     @Enumerated( EnumType.STRING )
-    private DeliveryStatus isDelivered;
+    private DeliveryStatus statusDelivery;
+
+    //TODO inserir passwordDelivery na tabela
+    @Column( unique = true )
+    private String passwordDelivery;
+
+    //TODO inserir dateSolicitation na tabela
+    private LocalDate dateSolicitation = LocalDate.now();
+
+    @OneToMany( cascade = CascadeType.ALL, orphanRemoval = true )
+    @JoinColumn( name = "delivery_id" )
+    List< Item > itemsList = new ArrayList<>();
+
+    public void addItemInList( Item item ) {
+
+        this.itemsList.add( item );
+    }
+
+    public void removeItemOfList( Long id ) {
+
+        this.itemsList.remove( id );
+    }
+
+    public void updateItemInList( String productName, Integer quantity ) {
+
+        for( Item item : itemsList ) {
+            if( item.getProductName().equals( productName ) ) {
+                item.setQuantity( quantity );
+                break;
+            }else{
+                throw new NoSuchElementException("Item not found in List of items.");
+            }
+        }
+    }
 
     @Override
     public boolean equals( Object o ) {
