@@ -33,15 +33,12 @@ public class Delivery {
     @JoinColumn( name = "recipient_id" )
     private Customers recipient;
 
-    //TODO alterar nome na tabela para statusDelivery
     @Enumerated( EnumType.STRING )
     private DeliveryStatus statusDelivery;
 
-    //TODO inserir passwordDelivery na tabela
     @Column( unique = true )
     private String passwordDelivery;
 
-    //TODO inserir dateSolicitation na tabela
     private LocalDate dateSolicitation = LocalDate.now();
 
     @OneToMany( cascade = CascadeType.ALL, orphanRemoval = true )
