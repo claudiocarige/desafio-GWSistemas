@@ -1,16 +1,17 @@
 package br.com.claudiocarige.mspersistencedb.core.usecases;
 
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.Delivery;
-import br.com.claudiocarige.mspersistencedb.core.domain.entities.Product;
 import br.com.claudiocarige.mspersistencedb.core.domain.enums.DeliveryStatus;
+import br.com.claudiocarige.mspersistencedb.core.dtos.RequestDelivery;
+import br.com.claudiocarige.mspersistencedb.core.dtos.ResponseOfSolicitation;
 
 
 public interface DeliveryService {
 
-    Delivery requestDelivery( Long senderId, Long recipientId, Product product ); //Solicitar Entrega
+    ResponseOfSolicitation requestDelivery( RequestDelivery requestDelivery ); //Solicitar Entrega
 
-    DeliveryStatus carryOutDelivery( Delivery delivery ); //Realizar entrega
+    DeliveryStatus carryOutDelivery( String passwordDelivery, Long deliveryId ); //Realizar entrega
 
-    boolean CheckIfDeliveryIsCompleted( Long deliveryId );
+    Boolean CheckIfDeliveryIsCompleted( Long deliveryId );
 
 }
