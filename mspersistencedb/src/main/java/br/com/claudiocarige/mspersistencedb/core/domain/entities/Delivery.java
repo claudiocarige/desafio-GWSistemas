@@ -6,6 +6,7 @@ import br.com.claudiocarige.mspersistencedb.core.exceptions.NoSuchElementExcepti
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,6 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -41,7 +41,10 @@ public class Delivery {
 
     private LocalDate dateSolicitation = LocalDate.now();
 
-    @OneToMany( cascade = CascadeType.ALL, orphanRemoval = true )
+    @Column(precision = 10, scale = 2)
+    private BigDecimal freightValue;
+
+    @OneToMany( cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER )
     @JoinColumn( name = "delivery_id" )
     List< Item > itemsList = new ArrayList<>();
 
@@ -81,5 +84,6 @@ public class Delivery {
 
         return Objects.hashCode( id );
     }
+
 
 }
