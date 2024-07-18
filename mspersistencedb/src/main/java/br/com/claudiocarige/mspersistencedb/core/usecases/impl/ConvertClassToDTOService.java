@@ -1,9 +1,11 @@
 package br.com.claudiocarige.mspersistencedb.core.usecases.impl;
 
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.CompanyCustomer;
+import br.com.claudiocarige.mspersistencedb.core.domain.entities.Delivery;
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.IndividualCustomer;
 import br.com.claudiocarige.mspersistencedb.core.dtos.CompanyCustomerDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.CustomerResponseDTO;
+import br.com.claudiocarige.mspersistencedb.core.dtos.DeliveryDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.IndividualCustomerDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,10 @@ public class ConvertClassToDTOService {
 
     public CustomerResponseDTO convertCompanyCustomerToCustomerResponseDTO( CompanyCustomer companyCustomer ) {
         return modelMapper.map( companyCustomer, CustomerResponseDTO.class );
+    }
+
+    public DeliveryDTO convertDeliveryToDTO( Delivery delivery ) {
+        return modelMapper.map( delivery, DeliveryDTO.class );
     }
 
 }
