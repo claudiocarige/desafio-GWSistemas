@@ -1,0 +1,1 @@
+ALTER TABLE Delivery ADD COLUMN freight_value NUMERIC(10, 2);
