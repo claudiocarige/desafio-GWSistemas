@@ -121,6 +121,42 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     }
 
+    private BigDecimal calcItemShippingValue( Product product ) {
+
+        return BigDecimal.valueOf( product.getValue().doubleValue() + (
+                product.getWeight() * ShippingRates.TX_WEIGHT.getRate() ) + (
+                product.getVolume() * ShippingRates.TX_VOLUME.getRate() ) + (
+                product.getValue().doubleValue() * ShippingRates.TX_SECURITY.getRate() ) + (
+                product.getValue().doubleValue() * ShippingRates.TX_ADM.getRate()));
+    }
+
+    private void calculateTotalShipping( Delivery delivery, Product product ) {
+
+        Double distance = searchFromDistance( delivery );
+        delivery.setFreightValue( BigDecimal.ZERO );
+        delivery.getItemsList().forEach( item ->
+                        delivery.setFreightValue( delivery.getFreightValue().add( item.getItemShippingValue() ) ) );
+        delivery.setFreightValue(
+
+                delivery.getFreightValue().add( BigDecimal.valueOf( distance * ShippingRates.TX_FUEL.getRate() ) ) );
+    }
+
+    private Double searchFromDistance( Delivery delivery ) {
+
+        var senderCity = delivery.getSender().getAddress().getCity();
+        var senderState = delivery.getSender().getAddress().getState();
+        var recipientCity = delivery.getRecipient().getAddress().getCity();
+        var recipientState = delivery.getRecipient().getAddress().getState();
+        var origin = senderCity + ", " + senderState;
+        var destination = recipientCity + ", " + recipientState;
+        return googleAPIDistanceMatrixService.calculateDistance( origin, destination );
+    }
+
+    private Product intanceProduct( Long productId ) {
+
+        return productService.findProductById( productId );
+    }
+
     public String randomPasswordGenerator() {
 
         Random random = new Random();
