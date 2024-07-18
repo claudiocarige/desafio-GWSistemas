@@ -1,0 +1,1 @@
+ALTER TABLE Item ADD COLUMN item_shipping_Value NUMERIC(10, 2);
