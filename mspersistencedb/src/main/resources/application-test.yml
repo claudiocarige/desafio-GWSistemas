@@ -1,9 +1,9 @@
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: ${DB_URL_POSTGRESQL}
-    username: ${DB_USERNAME_POSTGRESQL}
-    password: ${DB_PASSWORD_POSTGRESQL}
+    url: jdbc:postgresql://localhost:5432/productdelivery
+    username: postgres
+    password: Mklauro@2024
 
   jpa:
     hibernate:
@@ -19,3 +19,9 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
     validate-on-migrate: false
+
+
+google:
+  maps:
+    api:
+      key: ${GOOGLE_MAPS_API_KEY}
