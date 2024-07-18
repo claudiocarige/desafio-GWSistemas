@@ -81,15 +81,17 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
-    public Delivery findDeliveryById( Long id ) {
+    public DeliveryDTO findDeliveryById( Long id ) {
 
-        return deliveryRepository.findById( id ).orElseThrow( () -> new NoSuchElementException( "Delivery not Found" ) );
+        return convertClassToDTOService.convertDeliveryToDTO(
+              deliveryRepository.findById( id ).orElseThrow( () -> new NoSuchElementException( "Delivery not Found" ) )
+              );
     }
 
     @Override
-    public List< Delivery > findAllDeliveries() {
-
-        return deliveryRepository.findAll();
+    public List< DeliveryDTO > findAllDeliveries() {
+        List< Delivery > deliveries = deliveryRepository.findAll();
+        return deliveries.stream().map( convertClassToDTOService::convertDeliveryToDTO ).toList();
     }
 
     private void getDeliverydata( RequestDelivery request, Delivery delivery ) {
