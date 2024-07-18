@@ -20,7 +20,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompanyCustomerDTO implements Serializable {
+public class CompanyCustomerDTO implements Serializable, CustomerDTO {
 
     private Long id;
 
@@ -65,6 +65,12 @@ public class CompanyCustomerDTO implements Serializable {
     public int hashCode() {
 
         return Objects.hash( id, cnpj, principalEmail );
+    }
+
+    @Override
+    public String getCpf() {
+
+        return "";
     }
 
 }

@@ -5,8 +5,10 @@ import br.com.claudiocarige.mspersistencedb.core.domain.entities.CompanyCustomer
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.Customers;
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.IndividualCustomer;
 import br.com.claudiocarige.mspersistencedb.core.dtos.CompanyCustomerDTO;
+import br.com.claudiocarige.mspersistencedb.core.dtos.CustomerDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.CustomerResponseDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.IndividualCustomerDTO;
+import br.com.claudiocarige.mspersistencedb.core.exceptions.DataIntegrityViolationException;
 import br.com.claudiocarige.mspersistencedb.core.exceptions.NoSuchElementException;
 import br.com.claudiocarige.mspersistencedb.core.usecases.CustomerService;
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.AddressRepository;
@@ -48,6 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDTO createIndividualCustomer( IndividualCustomerDTO individualCustomerDTO ) {
 
         individualCustomerDTO.setId( null );
+        checkFields(individualCustomerDTO);
         Address savedAddress = addressRepository.save( individualCustomerDTO.getAddress() );
         IndividualCustomer individualCustomer = convertClassDTOService
                 .convertIndividualCustomerDTOToEntite( individualCustomerDTO );
@@ -61,6 +64,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDTO createCompanyCustomer( CompanyCustomerDTO companyCustomerDTO ) {
 
         companyCustomerDTO.setId( null );
+        checkFields(companyCustomerDTO);
         Address savedAddress = addressRepository.save( companyCustomerDTO.getAddress() );
         CompanyCustomer companyCustomer = convertClassDTOService
                 .convertCompanyCustomerDTOToEntite( companyCustomerDTO );
@@ -109,6 +113,25 @@ public class CustomerServiceImpl implements CustomerService {
             return convertClassDTOService
                     .convertCompanyCustomerToCustomerResponseDTO( ( CompanyCustomer ) obj );
         } ).toList();
+    }
+
+    private void checkFields( CustomerDTO customerDTO) {
+
+        if(customerRepository.existsByPrincipalEmail(customerDTO.getPrincipalEmail())) {
+            throw new DataIntegrityViolationException("Email already registered! Please review your request");
+        }
+        if(customerRepository.existsByCnpj(customerDTO.getCnpj())) {
+            throw new DataIntegrityViolationException("CNPJ already registered! Please review your request");
+        }
+        if(customerRepository.existsByPhoneNumber(customerDTO.getPhoneNumber())) {
+            throw new DataIntegrityViolationException("Phone number already registered! Please review your request");
+        }
+        if(customerRepository.existsByCustomerName(customerDTO.getCustomerName())) {
+            throw new DataIntegrityViolationException("Customer name already registered! Please review your request");
+        }
+        if(customerRepository.existsByCpf(customerDTO.getCpf())) {
+            throw new DataIntegrityViolationException("CPF already registered! Please review your request");
+        }
     }
 
 }
