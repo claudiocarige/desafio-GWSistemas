@@ -2,6 +2,7 @@ package br.com.claudiocarige.mspersistencedb.infra.controllers;
 
 
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.Delivery;
+import br.com.claudiocarige.mspersistencedb.core.dtos.DeliveryDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.RequestDelivery;
 import br.com.claudiocarige.mspersistencedb.core.dtos.ResponseOfSolicitation;
 import br.com.claudiocarige.mspersistencedb.core.usecases.DeliveryService;
@@ -20,13 +21,13 @@ public class DeliveryController {
     public DeliveryController( DeliveryService deliveryService ) { this.deliveryService = deliveryService; }
 
     @GetMapping
-    public ResponseEntity< List< Delivery > > findAllDeliveries() {
+    public ResponseEntity< List< DeliveryDTO > > findAllDeliveries() {
 
         return ResponseEntity.ok( deliveryService.findAllDeliveries() );
     }
 
     @GetMapping( "/{id}" )
-    public ResponseEntity< Delivery > findDeliveryById( @PathVariable Long id ) {
+    public ResponseEntity< DeliveryDTO > findDeliveryById( @PathVariable Long id ) {
 
         return ResponseEntity.ok( deliveryService.findDeliveryById( id ) );
     }
