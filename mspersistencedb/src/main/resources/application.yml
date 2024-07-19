@@ -1,7 +1,27 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: mspersistencedb
   profiles:
     active: test
-server:
-    port: 8080
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_SERVICE}
+    password: ${SECRET_KEY_EMAIL}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connectiontimeout: 6000
+          timeout: 6000
+          writetimeout: 6000
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+google:
+  maps:
+    api:
+      key: ${GOOGLE_MAPS_API_KEY}
