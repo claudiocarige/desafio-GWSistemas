@@ -13,10 +13,12 @@ import br.com.claudiocarige.mspersistencedb.core.exceptions.InsufficientStockExc
 import br.com.claudiocarige.mspersistencedb.core.exceptions.NoSuchElementException;
 import br.com.claudiocarige.mspersistencedb.core.usecases.DeliveryService;
 import br.com.claudiocarige.mspersistencedb.core.usecases.ProductService;
+import br.com.claudiocarige.mspersistencedb.infra.adapters.google_mail_services.DeliveryEmailSendingService;
 import br.com.claudiocarige.mspersistencedb.infra.adapters.google_maps_service.GoogleAPIDistanceMatrixService;
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.CustomerRepository;
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.DeliveryRepository;
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.ItemRepository;
+import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,13 +46,16 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     private final ConvertClassToDTOService convertClassToDTOService;
 
+    private final DeliveryEmailSendingService deliveryEmailSendingService;
+
     @Autowired
     public DeliveryServiceImpl( DeliveryRepository deliveryRepository,
                                 ProductService productService,
                                 CustomerRepository customerRepository,
                                 ItemRepository itemRepository,
                                 GoogleAPIDistanceMatrixService googleAPIDistanceMatrixService,
-                                ConvertClassToDTOService convertClassToDTOService ) {
+                                ConvertClassToDTOService convertClassToDTOService,
+                                DeliveryEmailSendingService deliveryEmailSendingService ) {
 
         this.deliveryRepository = deliveryRepository;
         this.productService = productService;
@@ -58,10 +63,11 @@ public class DeliveryServiceImpl implements DeliveryService {
         this.itemRepository = itemRepository;
         this.googleAPIDistanceMatrixService = googleAPIDistanceMatrixService;
         this.convertClassToDTOService = convertClassToDTOService;
+        this.deliveryEmailSendingService = deliveryEmailSendingService;
     }
 
     @Override
-    public ResponseOfSolicitation requestDelivery( RequestDelivery request ) {
+    public ResponseOfSolicitation requestDelivery( RequestDelivery request ) throws MessagingException {
 
         if( request.quantity() <= 0 ) {
             throw new IllegalArgumentException( "Quantity must be greater than 0" );
@@ -72,45 +78,34 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         Delivery delivery = new Delivery();
         generateDeliveryData( request, delivery );
-        //TODO disparar email para sender de confirmação de solicitação de entrega
-        //TODO disparar email para recipient com data de recebimento e password
+        deliveryEmailSendingService.sendEmail( delivery.getSender().getPrincipalEmail(),
+                                                 "congratulations", "foi agendada para ser entregue." );
+        deliveryEmailSendingService.sendEmail( delivery.getRecipient().getPrincipalEmail(),
+                                                        "password-delivery", delivery.getPasswordDelivery() );
         String message = "Solicitação de entrega confirmada.";
         return new ResponseOfSolicitation( message, delivery.getId(), delivery.getDateSolicitation().toString(),
                 delivery.getDateSolicitation().plusDays( 15 ).toString() );
     }
 
-    private void generateDeliveryData( RequestDelivery request, Delivery delivery ) {
-
-        delivery.setSender( customerRepository.findById( request.senderId() )
-                .orElseThrow( () -> new NoSuchElementException( "Customer not Found" ) ) );
-
-        delivery.setRecipient( customerRepository.findById( request.recipientId() )
-                .orElseThrow( () -> new NoSuchElementException( "Customer not Found" ) ) );
-        Product product = intanceProduct( request.productId() );
-        calculateTotalShipping( delivery, product );//TODO calcular frete FINALIZAR CALCULO
-        delivery.setPasswordDelivery( randomPasswordGenerator() );
-        delivery.setStatusDelivery( DeliveryStatus.PENDING );
-        Item item = getItem( request, product );
-        delivery.addItemInList( item );
-        delivery = deliveryRepository.save( delivery );
-        item.setDelivery( delivery );
-        itemRepository.save( item );
-    }
-
-
     @Override
-    public DeliveryStatus carryOutDelivery( String passwordDelivery, Long deliveryId ) {
-        //TODO Buscar delivery
-        //TODO enviar mensagem para sender se transação completa, senão verificar retorno
-        //TODO alterar status
+    public DeliveryDTO carryOutDelivery( String passwordDelivery, Long deliveryId ) throws MessagingException {
+        Delivery delivery = deliveryRepository.findById( deliveryId )
+                                              .orElseThrow( () -> new NoSuchElementException( "Delivery not Found" ) );
+        if( !delivery.getPasswordDelivery().equals( passwordDelivery ) ) {
+            throw new IllegalArgumentException( "Invalid password" );
+        }
+        deliveryRepository.updateStatusDelivery( delivery.getId() , DeliveryStatus.DELIVERED );
 
-        return null;
+        deliveryEmailSendingService.sendEmail( delivery.getSender().getPrincipalEmail(),
+                "congratulations", "foi agendada para ser entregue." );
+
+        return convertClassToDTOService.convertDeliveryToDTO( delivery );
     }
 
     @Override
     public Boolean CheckIfDeliveryIsCompleted( Long deliveryId ) {
 
-        return false;
+        return deliveryRepository.findStatusDeliveryById( deliveryId ).equals( DeliveryStatus.DELIVERED );
     }
 
     @Override
@@ -125,6 +120,24 @@ public class DeliveryServiceImpl implements DeliveryService {
     public List< DeliveryDTO > findAllDeliveries() {
         List< Delivery > deliveries = deliveryRepository.findAll();
         return deliveries.stream().map( convertClassToDTOService::convertDeliveryToDTO ).toList();
+    }
+
+    private void generateDeliveryData( RequestDelivery request, Delivery delivery ) {
+
+        delivery.setSender( customerRepository.findById( request.senderId() )
+                .orElseThrow( () -> new NoSuchElementException( "Customer not Found" ) ) );
+
+        delivery.setRecipient( customerRepository.findById( request.recipientId() )
+                .orElseThrow( () -> new NoSuchElementException( "Customer not Found" ) ) );
+        Product product = intanceProduct( request.productId() );
+        calculateTotalShipping( delivery );
+        delivery.setPasswordDelivery( randomPasswordGenerator() );
+        delivery.setStatusDelivery( DeliveryStatus.PENDING );
+        Item item = getItem( request, product );
+        delivery.addItemInList( item );
+        delivery = deliveryRepository.save( delivery );
+        item.setDelivery( delivery );
+        itemRepository.save( item );
     }
 
     private Item getItem( RequestDelivery request, Product product ) {
@@ -157,7 +170,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                 product.getValue().doubleValue() * ShippingRates.TX_ADM.getRate()));
     }
 
-    private void calculateTotalShipping( Delivery delivery, Product product ) {
+    private void calculateTotalShipping( Delivery delivery ) {
 
         Double distance = searchFromDistance( delivery );
         delivery.setFreightValue( BigDecimal.ZERO );
