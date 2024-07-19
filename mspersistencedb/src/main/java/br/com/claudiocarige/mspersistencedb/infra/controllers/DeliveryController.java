@@ -6,6 +6,7 @@ import br.com.claudiocarige.mspersistencedb.core.dtos.DeliveryDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.RequestDelivery;
 import br.com.claudiocarige.mspersistencedb.core.dtos.ResponseOfSolicitation;
 import br.com.claudiocarige.mspersistencedb.core.usecases.DeliveryService;
+import jakarta.mail.MessagingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,10 +40,16 @@ public class DeliveryController {
     }
 
     @PostMapping( "/request-delivery/save" )
-    public ResponseEntity< ResponseOfSolicitation > requestDelivery( @RequestBody RequestDelivery requestDelivery ) {
+    public ResponseEntity< ResponseOfSolicitation > requestDelivery( @RequestBody RequestDelivery requestDelivery )
+                                                                                            throws MessagingException {
 
         return ResponseEntity.ok().body( deliveryService.requestDelivery( requestDelivery ) );
     }
 
+    @GetMapping( "/delivery-confirmation" )
+    public ResponseEntity<DeliveryDTO> carryOutDelivery( @RequestParam Long deliveryId, String confirmationCode ) throws MessagingException {
+
+        return ResponseEntity.ok( deliveryService.carryOutDelivery( confirmationCode, deliveryId ) );
+    }
 
 }
