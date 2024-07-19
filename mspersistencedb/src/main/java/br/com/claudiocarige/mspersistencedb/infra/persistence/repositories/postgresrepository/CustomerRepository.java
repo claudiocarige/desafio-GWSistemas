@@ -20,4 +20,6 @@ public interface CustomerRepository extends JpaRepository< Customers, Long > {
     @Query( "SELECT CASE WHEN COUNT(c) > 0 THEN TRUE ELSE FALSE END FROM IndividualCustomer c WHERE c.cpf = :cpf" )
     boolean existsByCpf( @Param( "cpf" ) String cpf );
 
+    Customers findByPrincipalEmail( String customerName );
+
 }

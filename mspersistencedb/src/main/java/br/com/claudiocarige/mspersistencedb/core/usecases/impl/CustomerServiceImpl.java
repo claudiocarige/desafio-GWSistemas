@@ -50,7 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDTO createIndividualCustomer( IndividualCustomerDTO individualCustomerDTO ) {
 
         individualCustomerDTO.setId( null );
-        checkFields(individualCustomerDTO);
+        checkFields( individualCustomerDTO );
         Address savedAddress = addressRepository.save( individualCustomerDTO.getAddress() );
         IndividualCustomer individualCustomer = convertClassDTOService
                 .convertIndividualCustomerDTOToEntite( individualCustomerDTO );
@@ -64,7 +64,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDTO createCompanyCustomer( CompanyCustomerDTO companyCustomerDTO ) {
 
         companyCustomerDTO.setId( null );
-        checkFields(companyCustomerDTO);
+        checkFields( companyCustomerDTO );
         Address savedAddress = addressRepository.save( companyCustomerDTO.getAddress() );
         CompanyCustomer companyCustomer = convertClassDTOService
                 .convertCompanyCustomerDTOToEntite( companyCustomerDTO );
@@ -77,7 +77,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDTO updateIndividualCustomer( IndividualCustomerDTO individualCustomerDTO ) {
 
         return convertClassDTOService
-                   .convertIndividualCustomerToCustomerResponseDTO( individualCustomerRepository.save(
+                .convertIndividualCustomerToCustomerResponseDTO( individualCustomerRepository.save(
                         convertClassDTOService.convertIndividualCustomerDTOToEntite( individualCustomerDTO ) ) );
     }
 
@@ -85,7 +85,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDTO updateCompanyCustomer( CompanyCustomerDTO companyCustomerDTO ) {
 
         return convertClassDTOService
-                   .convertCompanyCustomerToCustomerResponseDTO( companyCustomerRepository.save(
+                .convertCompanyCustomerToCustomerResponseDTO( companyCustomerRepository.save(
                         convertClassDTOService.convertCompanyCustomerDTOToEntite( companyCustomerDTO ) ) );
     }
 
@@ -115,22 +115,33 @@ public class CustomerServiceImpl implements CustomerService {
         } ).toList();
     }
 
-    private void checkFields( CustomerDTO customerDTO) {
+    @Override
+    public CustomerResponseDTO findByPrimaryEmail( String customerName ) {
 
-        if(customerRepository.existsByPrincipalEmail(customerDTO.getPrincipalEmail())) {
-            throw new DataIntegrityViolationException("Email already registered! Please review your request");
+        Customers customer = customerRepository.findByPrincipalEmail( customerName );
+        if( customer instanceof IndividualCustomer ) {
+            return convertClassDTOService
+                                  .convertIndividualCustomerToCustomerResponseDTO( ( IndividualCustomer ) customer );
         }
-        if(customerRepository.existsByCnpj(customerDTO.getCnpj())) {
-            throw new DataIntegrityViolationException("CNPJ already registered! Please review your request");
+        return convertClassDTOService.convertCompanyCustomerToCustomerResponseDTO( ( CompanyCustomer ) customer );
+    }
+
+    private void checkFields( CustomerDTO customerDTO ) {
+
+        if( customerRepository.existsByPrincipalEmail( customerDTO.getPrincipalEmail() ) ) {
+            throw new DataIntegrityViolationException( "Email already registered! Please review your request" );
         }
-        if(customerRepository.existsByPhoneNumber(customerDTO.getPhoneNumber())) {
-            throw new DataIntegrityViolationException("Phone number already registered! Please review your request");
+        if( customerRepository.existsByCnpj( customerDTO.getCnpj() ) ) {
+            throw new DataIntegrityViolationException( "CNPJ already registered! Please review your request" );
         }
-        if(customerRepository.existsByCustomerName(customerDTO.getCustomerName())) {
-            throw new DataIntegrityViolationException("Customer name already registered! Please review your request");
+        if( customerRepository.existsByPhoneNumber( customerDTO.getPhoneNumber() ) ) {
+            throw new DataIntegrityViolationException( "Phone number already registered! Please review your request" );
         }
-        if(customerRepository.existsByCpf(customerDTO.getCpf())) {
-            throw new DataIntegrityViolationException("CPF already registered! Please review your request");
+        if( customerRepository.existsByCustomerName( customerDTO.getCustomerName() ) ) {
+            throw new DataIntegrityViolationException( "Customer name already registered! Please review your request" );
+        }
+        if( customerRepository.existsByCpf( customerDTO.getCpf() ) ) {
+            throw new DataIntegrityViolationException( "CPF already registered! Please review your request" );
         }
     }
 

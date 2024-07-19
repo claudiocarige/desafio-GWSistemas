@@ -21,4 +21,6 @@ public interface CustomerService {
 
     List<CustomerResponseDTO> listAllCustomers();
 
+    CustomerResponseDTO findByPrimaryEmail( String customerName );
+
 }
