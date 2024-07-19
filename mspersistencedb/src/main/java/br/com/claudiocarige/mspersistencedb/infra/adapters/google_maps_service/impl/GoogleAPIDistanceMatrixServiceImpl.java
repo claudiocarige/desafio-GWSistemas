@@ -25,7 +25,7 @@ public class GoogleAPIDistanceMatrixServiceImpl implements GoogleAPIDistanceMatr
 
     private final RestTemplate restTemplate;
 
-
+    @Autowired
     public GoogleAPIDistanceMatrixServiceImpl( RestTemplate restTemplate ) {
 
         this.restTemplate = restTemplate;

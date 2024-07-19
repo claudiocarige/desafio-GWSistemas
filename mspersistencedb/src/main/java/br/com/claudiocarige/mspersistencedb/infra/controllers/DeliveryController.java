@@ -19,6 +19,7 @@ public class DeliveryController {
 
     private final DeliveryService deliveryService;
 
+    @Autowired
     public DeliveryController( DeliveryService deliveryService ) { this.deliveryService = deliveryService; }
 
     @GetMapping

@@ -24,6 +24,16 @@ public class DeliveryEmailSendingServiceImpl implements DeliveryEmailSendingServ
 
     private final CustomerService customerService;
 
+    @Autowired
+    public DeliveryEmailSendingServiceImpl( JavaMailSender javaMailSender,
+                                            SpringTemplateEngine templateEngine,
+                                            CustomerService customerService ) {
+
+        this.javaMailSender = javaMailSender;
+        this.templateEngine = templateEngine;
+        this.customerService = customerService;
+    }
+
     @Override
     public void sendEmail( String toEmail, String subject, String data ) throws MessagingException {
 

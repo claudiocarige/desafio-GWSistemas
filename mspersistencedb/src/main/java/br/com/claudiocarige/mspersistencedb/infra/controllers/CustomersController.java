@@ -23,6 +23,7 @@ public class CustomersController {
 
     private final CustomerService customerService;
 
+    @Autowired
     public CustomersController( CustomerService customerService ) { this.customerService = customerService; }
 
 

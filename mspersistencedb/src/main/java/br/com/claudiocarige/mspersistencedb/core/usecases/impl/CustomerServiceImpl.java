@@ -34,7 +34,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final ConvertClassToDTOService convertClassDTOService;
 
-
+    @Autowired
     public CustomerServiceImpl( IndividualCustomerRepository individualCustomerRepository,
                                 CompanyCustomerRepository companyCustomerRepository, CustomerRepository customerRepository,
                                 AddressRepository addressRepository, ConvertClassToDTOService convertClassDTOService ) {

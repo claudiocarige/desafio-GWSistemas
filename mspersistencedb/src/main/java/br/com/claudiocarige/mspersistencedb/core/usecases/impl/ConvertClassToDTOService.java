@@ -16,6 +16,7 @@ public class ConvertClassToDTOService {
 
     private final ModelMapper modelMapper;
 
+    @Autowired
     public ConvertClassToDTOService( ModelMapper modelMapper ) { this.modelMapper = modelMapper; }
 
     public IndividualCustomer convertIndividualCustomerDTOToEntite( IndividualCustomerDTO individualCustomerDTO ) {
