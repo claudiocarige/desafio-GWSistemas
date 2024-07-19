@@ -39,7 +39,6 @@ public class GoogleAPIDistanceMatrixServiceImpl implements GoogleAPIDistanceMatr
         try {
             ResponseEntity< String > response = restTemplate.exchange( url, HttpMethod.GET,
                     null, String.class );
-            log.info( "RESPONSE FROM GOOGLE MAPS API   :  {}", response.getBody() );
             return getJsonResponse( response.getBody() );
 
         } catch( HttpClientErrorException e ) {
