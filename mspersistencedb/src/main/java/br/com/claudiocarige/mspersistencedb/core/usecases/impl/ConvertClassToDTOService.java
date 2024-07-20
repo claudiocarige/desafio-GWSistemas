@@ -8,6 +8,7 @@ import br.com.claudiocarige.mspersistencedb.core.dtos.CustomerResponseDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.DeliveryDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.IndividualCustomerDTO;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
@@ -20,30 +21,27 @@ public class ConvertClassToDTOService {
     public ConvertClassToDTOService( ModelMapper modelMapper ) { this.modelMapper = modelMapper; }
 
     public IndividualCustomer convertIndividualCustomerDTOToEntite( IndividualCustomerDTO individualCustomerDTO ) {
+
         return modelMapper.map( individualCustomerDTO, IndividualCustomer.class );
-    }
-    
-    public IndividualCustomerDTO convertIndividualCustomerToDTO( IndividualCustomer individualCustomer ) {
-        return modelMapper.map( individualCustomer, IndividualCustomerDTO.class );
     }
 
     public CompanyCustomer convertCompanyCustomerDTOToEntite( CompanyCustomerDTO companyCustomerDTO ) {
+
         return modelMapper.map( companyCustomerDTO, CompanyCustomer.class );
-    }
-    
-    public CompanyCustomerDTO convertCompanyCustomerToDTO( CompanyCustomer companyCustomer ) {
-        return modelMapper.map( companyCustomer, CompanyCustomerDTO.class );
     }
 
     public CustomerResponseDTO convertIndividualCustomerToCustomerResponseDTO( IndividualCustomer individualCustomer ) {
+
         return modelMapper.map( individualCustomer, CustomerResponseDTO.class );
     }
 
     public CustomerResponseDTO convertCompanyCustomerToCustomerResponseDTO( CompanyCustomer companyCustomer ) {
+
         return modelMapper.map( companyCustomer, CustomerResponseDTO.class );
     }
 
     public DeliveryDTO convertDeliveryToDTO( Delivery delivery ) {
+
         return modelMapper.map( delivery, DeliveryDTO.class );
     }
 

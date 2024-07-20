@@ -22,8 +22,10 @@ import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -79,12 +81,12 @@ public class DeliveryServiceImpl implements DeliveryService {
         Delivery delivery = new Delivery();
         generateDeliveryData( request, delivery );
         deliveryEmailSendingService.sendEmail( delivery.getSender().getPrincipalEmail(),
-                                                 "congratulations", "foi agendada para ser entregue." );
+                                                               "congratulations", "foi agendada para ser entregue." );
         deliveryEmailSendingService.sendEmail( delivery.getRecipient().getPrincipalEmail(),
-                                                        "password-delivery", delivery.getPasswordDelivery() );
+                                                                "password-delivery", delivery.getPasswordDelivery() );
         String message = "Solicitação de entrega confirmada.";
         return new ResponseOfSolicitation( message, delivery.getId(), delivery.getDateSolicitation().toString(),
-                delivery.getDateSolicitation().plusDays( 15 ).toString() );
+                                                           delivery.getDateSolicitation().plusDays( 15 ).toString() );
     }
 
     @Transactional
@@ -117,12 +119,12 @@ public class DeliveryServiceImpl implements DeliveryService {
     public DeliveryDTO findDeliveryById( Long id ) {
 
         return convertClassToDTOService.convertDeliveryToDTO(
-              deliveryRepository.findById( id ).orElseThrow( () -> new NoSuchElementException( "Delivery not Found" ) )
-              );
+            deliveryRepository.findById( id ).orElseThrow( () -> new NoSuchElementException( "Delivery not Found" ) ));
     }
 
     @Override
     public List< DeliveryDTO > findAllDeliveries() {
+
         List< Delivery > deliveries = deliveryRepository.findAll();
         return deliveries.stream().map( convertClassToDTOService::convertDeliveryToDTO ).toList();
     }
@@ -130,16 +132,17 @@ public class DeliveryServiceImpl implements DeliveryService {
     private void generateDeliveryData( RequestDelivery request, Delivery delivery ) {
 
         delivery.setSender( customerRepository.findById( request.senderId() )
-                .orElseThrow( () -> new NoSuchElementException( "Customer not Found" ) ) );
+                                           .orElseThrow( () -> new NoSuchElementException( "Customer not Found" ) ) );
 
         delivery.setRecipient( customerRepository.findById( request.recipientId() )
-                .orElseThrow( () -> new NoSuchElementException( "Customer not Found" ) ) );
+                                           .orElseThrow( () -> new NoSuchElementException( "Customer not Found" ) ) );
         Product product = intanceProduct( request.productId() );
-        calculateTotalShipping( delivery );
+
         delivery.setPasswordDelivery( randomPasswordGenerator() );
         delivery.setStatusDelivery( DeliveryStatus.PENDING );
         Item item = getItem( request, product );
         delivery.addItemInList( item );
+        calculateTotalShipping( delivery );
         delivery = deliveryRepository.save( delivery );
         item.setDelivery( delivery );
         itemRepository.save( item );
@@ -154,7 +157,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         updateStock( product, request.quantity() );
         Item item = new Item();
         item.setProductName( product.getName() );
-        item.setItemShippingValue( calcItemShippingValue(product) );
+        item.setItemShippingValue( calcItemShippingValue( product, request.quantity()  ) );
         item.setQuantity( request.quantity() );
         return item;
     }
@@ -166,13 +169,13 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     }
 
-    private BigDecimal calcItemShippingValue( Product product ) {
+    private BigDecimal calcItemShippingValue( Product product, Integer quantity ) {
 
-        return BigDecimal.valueOf( product.getValue().doubleValue() + (
+        return BigDecimal.valueOf( ( product.getValue().doubleValue() * quantity ) + (
                 product.getWeight() * ShippingRates.TX_WEIGHT.getRate() ) + (
                 product.getVolume() * ShippingRates.TX_VOLUME.getRate() ) + (
                 product.getValue().doubleValue() * ShippingRates.TX_SECURITY.getRate() ) + (
-                product.getValue().doubleValue() * ShippingRates.TX_ADM.getRate()));
+                product.getValue().doubleValue() * ShippingRates.TX_ADM.getRate() ) );
     }
 
     private void calculateTotalShipping( Delivery delivery ) {

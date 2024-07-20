@@ -15,6 +15,7 @@ import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postg
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.CompanyCustomerRepository;
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.CustomerRepository;
 import br.com.claudiocarige.mspersistencedb.infra.persistence.repositories.postgresrepository.IndividualCustomerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +23,6 @@ import java.util.List;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
-
 
     private final IndividualCustomerRepository individualCustomerRepository;
 
@@ -36,8 +36,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     public CustomerServiceImpl( IndividualCustomerRepository individualCustomerRepository,
-                                CompanyCustomerRepository companyCustomerRepository, CustomerRepository customerRepository,
-                                AddressRepository addressRepository, ConvertClassToDTOService convertClassDTOService ) {
+                                CompanyCustomerRepository companyCustomerRepository,
+                                CustomerRepository customerRepository,
+                                AddressRepository addressRepository,
+                                ConvertClassToDTOService convertClassDTOService ) {
 
         this.individualCustomerRepository = individualCustomerRepository;
         this.companyCustomerRepository = companyCustomerRepository;
@@ -53,7 +55,7 @@ public class CustomerServiceImpl implements CustomerService {
         checkFields( individualCustomerDTO );
         Address savedAddress = addressRepository.save( individualCustomerDTO.getAddress() );
         IndividualCustomer individualCustomer = convertClassDTOService
-                .convertIndividualCustomerDTOToEntite( individualCustomerDTO );
+                                                       .convertIndividualCustomerDTOToEntite( individualCustomerDTO );
         individualCustomer.setAddress( savedAddress );
         individualCustomer = individualCustomerRepository.save( individualCustomer );
         return convertClassDTOService.convertIndividualCustomerToCustomerResponseDTO( individualCustomer );
@@ -67,7 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
         checkFields( companyCustomerDTO );
         Address savedAddress = addressRepository.save( companyCustomerDTO.getAddress() );
         CompanyCustomer companyCustomer = convertClassDTOService
-                .convertCompanyCustomerDTOToEntite( companyCustomerDTO );
+                                                             .convertCompanyCustomerDTOToEntite( companyCustomerDTO );
         companyCustomer.setAddress( savedAddress );
         companyCustomer = companyCustomerRepository.save( companyCustomer );
         return convertClassDTOService.convertCompanyCustomerToCustomerResponseDTO( companyCustomer );
@@ -77,26 +79,26 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDTO updateIndividualCustomer( IndividualCustomerDTO individualCustomerDTO ) {
 
         return convertClassDTOService
-                .convertIndividualCustomerToCustomerResponseDTO( individualCustomerRepository.save(
-                        convertClassDTOService.convertIndividualCustomerDTOToEntite( individualCustomerDTO ) ) );
+                      .convertIndividualCustomerToCustomerResponseDTO( individualCustomerRepository.save(
+                             convertClassDTOService.convertIndividualCustomerDTOToEntite( individualCustomerDTO ) ) );
     }
 
     @Override
     public CustomerResponseDTO updateCompanyCustomer( CompanyCustomerDTO companyCustomerDTO ) {
 
         return convertClassDTOService
-                .convertCompanyCustomerToCustomerResponseDTO( companyCustomerRepository.save(
-                        convertClassDTOService.convertCompanyCustomerDTOToEntite( companyCustomerDTO ) ) );
+                       .convertCompanyCustomerToCustomerResponseDTO( companyCustomerRepository.save(
+                                   convertClassDTOService.convertCompanyCustomerDTOToEntite( companyCustomerDTO ) ) );
     }
 
     @Override
     public CustomerResponseDTO findCustomerById( Long customerId ) {
 
         Customers customer = customerRepository.findById( customerId )
-                .orElseThrow( () -> new NoSuchElementException( "Customer not found." ) );
+                                            .orElseThrow( () -> new NoSuchElementException( "Customer not found." ) );
         if( customer instanceof IndividualCustomer ) {
             return convertClassDTOService
-                    .convertIndividualCustomerToCustomerResponseDTO( ( IndividualCustomer ) customer );
+                                   .convertIndividualCustomerToCustomerResponseDTO( ( IndividualCustomer ) customer );
         }
         return convertClassDTOService.convertCompanyCustomerToCustomerResponseDTO( ( CompanyCustomer ) customer );
     }
@@ -108,10 +110,9 @@ public class CustomerServiceImpl implements CustomerService {
         return customersList.stream().map( obj -> {
             if( obj instanceof IndividualCustomer ) {
                 return convertClassDTOService
-                        .convertIndividualCustomerToCustomerResponseDTO( ( IndividualCustomer ) obj );
+                                        .convertIndividualCustomerToCustomerResponseDTO( ( IndividualCustomer ) obj );
             }
-            return convertClassDTOService
-                    .convertCompanyCustomerToCustomerResponseDTO( ( CompanyCustomer ) obj );
+            return convertClassDTOService.convertCompanyCustomerToCustomerResponseDTO( ( CompanyCustomer ) obj );
         } ).toList();
     }
 
@@ -121,7 +122,7 @@ public class CustomerServiceImpl implements CustomerService {
         Customers customer = customerRepository.findByPrincipalEmail( customerName );
         if( customer instanceof IndividualCustomer ) {
             return convertClassDTOService
-                                  .convertIndividualCustomerToCustomerResponseDTO( ( IndividualCustomer ) customer );
+                                   .convertIndividualCustomerToCustomerResponseDTO( ( IndividualCustomer ) customer );
         }
         return convertClassDTOService.convertCompanyCustomerToCustomerResponseDTO( ( CompanyCustomer ) customer );
     }

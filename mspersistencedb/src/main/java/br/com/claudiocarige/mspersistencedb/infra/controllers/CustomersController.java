@@ -5,6 +5,7 @@ import br.com.claudiocarige.mspersistencedb.core.dtos.CompanyCustomerDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.CustomerResponseDTO;
 import br.com.claudiocarige.mspersistencedb.core.usecases.CustomerService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +33,7 @@ public class CustomersController {
         log.info( "Creating company customer: {}", companyCustomerDTO );
         CustomerResponseDTO customerResponseDTO = customerService.createCompanyCustomer( companyCustomerDTO );
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand( customerResponseDTO.getId() ).toUri();
+                                                               .buildAndExpand( customerResponseDTO.getId() ).toUri();
         return ResponseEntity.created( uri ).build();
     }
 

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +38,7 @@ public class GoogleAPIDistanceMatrixServiceImpl implements GoogleAPIDistanceMatr
         String url = String.format( URL, origin, destination, apiKey );
 
         try {
-            ResponseEntity< String > response = restTemplate.exchange( url, HttpMethod.GET,
-                    null, String.class );
+            ResponseEntity< String > response = restTemplate.exchange( url, HttpMethod.GET, null, String.class );
             return getJsonResponse( response.getBody() );
 
         } catch( HttpClientErrorException e ) {
@@ -48,7 +48,6 @@ public class GoogleAPIDistanceMatrixServiceImpl implements GoogleAPIDistanceMatr
 
     private Double getJsonResponse( String jsonResponse ) {
 
-        System.out.println( jsonResponse );
         try {
             JSONObject jsonObject = new JSONObject( jsonResponse );
             JSONArray rows = jsonObject.getJSONArray( "rows" );

@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
                                                                      HttpServletRequest request ) {
 
         StandardError error = new StandardError( System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(), request.getRequestURI() );
+                                                                           ex.getMessage(), request.getRequestURI() );
         log.error( "[ ERROR ] IllegalArgumentException Class : {} ", error.getMessage() );
         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).body( error );
     }
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
                                                                    HttpServletRequest request ) {
 
         StandardError error = new StandardError( System.currentTimeMillis(), HttpStatus.NOT_FOUND.value(),
-                ex.getMessage(), request.getRequestURI() );
+                                                                           ex.getMessage(), request.getRequestURI() );
         log.error( "[ ERROR ] NoSuchElementException Class : {} ", error.getMessage() );
         return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( error );
     }
@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
                                                                        HttpServletRequest request ) {
 
         StandardError error = new StandardError( System.currentTimeMillis(), HttpStatus.NOT_FOUND.value(),
-                ex.getMessage(), request.getRequestURI() );
+                                                                           ex.getMessage(), request.getRequestURI() );
         log.error( "[ ERROR ] InsufficientStockException Class : {} ", error.getMessage() );
         return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( error );
     }
@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
                                                                             HttpServletRequest request ) {
 
         StandardError erro = new StandardError( System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(), request.getRequestURI() );
+                                                                           ex.getMessage(), request.getRequestURI() );
         log.error( "[ ERROR ] DataIntegrityViolationException class : {} ", ex.getMessage() );
         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).body( erro );
     }
