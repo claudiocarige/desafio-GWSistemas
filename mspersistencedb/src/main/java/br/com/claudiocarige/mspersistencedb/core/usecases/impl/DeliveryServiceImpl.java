@@ -87,18 +87,23 @@ public class DeliveryServiceImpl implements DeliveryService {
                 delivery.getDateSolicitation().plusDays( 15 ).toString() );
     }
 
+    @Transactional
     @Override
     public DeliveryDTO carryOutDelivery( String passwordDelivery, Long deliveryId ) throws MessagingException {
+
         Delivery delivery = deliveryRepository.findById( deliveryId )
-                                              .orElseThrow( () -> new NoSuchElementException( "Delivery not Found" ) );
-        if( !delivery.getPasswordDelivery().equals( passwordDelivery ) ) {
+                                             .orElseThrow( () -> new NoSuchElementException( "Delivery not Found" ) );
+        if( ! delivery.getPasswordDelivery().equals( passwordDelivery ) ) {
             throw new IllegalArgumentException( "Invalid password" );
         }
-        deliveryRepository.updateStatusDelivery( delivery.getId() , DeliveryStatus.DELIVERED );
+        int rowsAffected = deliveryRepository.updateStatusDelivery( delivery.getId(), DeliveryStatus.DELIVERED );
 
-        deliveryEmailSendingService.sendEmail( delivery.getSender().getPrincipalEmail(),
-                "congratulations", "foi agendada para ser entregue." );
-
+        if (rowsAffected == 0) {
+            throw new NoSuchElementException("Delivery with ID " + deliveryId + " not found.");
+        }
+        var message = "foi entregue hoje às " + LocalDateTime.now().getHour() + " horas, com sucesso.";
+        deliveryEmailSendingService.sendEmail( delivery.getSender().getPrincipalEmail(), "congratulations", message );
+        delivery.setStatusDelivery(DeliveryStatus.DELIVERED);
         return convertClassToDTOService.convertDeliveryToDTO( delivery );
     }
 
