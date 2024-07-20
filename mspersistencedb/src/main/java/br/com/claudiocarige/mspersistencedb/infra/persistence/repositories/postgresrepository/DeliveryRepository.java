@@ -12,7 +12,7 @@ public interface DeliveryRepository extends JpaRepository< Delivery, Long > {
 
     @Modifying
     @Query( "UPDATE Delivery d SET d.statusDelivery = :statusDelivery WHERE d.id = :id" )
-    void updateStatusDelivery( @Param( "id" ) Long id, @Param( "statusDelivery" ) DeliveryStatus statusDelivery );
+    int updateStatusDelivery( @Param( "id" ) Long id, @Param( "statusDelivery" ) DeliveryStatus statusDelivery );
 
     @Query( "SELECT d.statusDelivery FROM Delivery d WHERE d.id = :id" )
     DeliveryStatus findStatusDeliveryById( @Param( "id" ) Long id );
