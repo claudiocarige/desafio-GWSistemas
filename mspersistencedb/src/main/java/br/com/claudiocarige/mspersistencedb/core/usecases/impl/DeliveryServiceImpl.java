@@ -172,23 +172,23 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     private void calculateTotalShipping( Delivery delivery ) {
 
-        Double distance = searchFromDistance( delivery );
-        delivery.setFreightValue( BigDecimal.ZERO );
-        delivery.getItemsList().forEach( item ->
-                        delivery.setFreightValue( delivery.getFreightValue().add( item.getItemShippingValue() ) ) );
-        delivery.setFreightValue(
+        Double distance = searchFromDistance(delivery);
+        BigDecimal valueTotal = BigDecimal.ZERO;
 
-                delivery.getFreightValue().add( BigDecimal.valueOf( distance * ShippingRates.TX_FUEL.getRate() ) ) );
+        for (Item item : delivery.getItemsList()) {
+            valueTotal = valueTotal.add(item.getItemShippingValue());
+        }
+
+        var freightValue = (distance * ShippingRates.TX_FUEL.getRate()) + valueTotal.doubleValue();
+        delivery.setFreightValue(BigDecimal.valueOf(freightValue));
     }
 
     private Double searchFromDistance( Delivery delivery ) {
 
-        var senderCity = delivery.getSender().getAddress().getCity();
-        var senderState = delivery.getSender().getAddress().getState();
-        var recipientCity = delivery.getRecipient().getAddress().getCity();
-        var recipientState = delivery.getRecipient().getAddress().getState();
-        var origin = senderCity + ", " + senderState;
-        var destination = recipientCity + ", " + recipientState;
+        var origin = delivery.getSender().getAddress().getCity() + ", " +
+                                                                        delivery.getSender().getAddress().getState();
+        var destination = delivery.getRecipient().getAddress().getCity() + ", " +
+                                                                     delivery.getRecipient().getAddress().getState();
         return googleAPIDistanceMatrixService.searchFromDistance( origin, destination );
     }
 
