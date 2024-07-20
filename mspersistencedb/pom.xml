@@ -12,7 +12,7 @@
     <artifactId>mspersistencedb</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>mspersistencedb</name>
-    <description>Desafio de projeto para empresa GW Sistemas - Microserviço para persistir os dados no banco
+    <description>Desafio de projeto para empresa GW Sistemas.
     </description>
     <developers>
         <developer>
@@ -29,6 +29,7 @@
         <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <springdoc.version>2.0.2</springdoc.version>
     </properties>
     <dependencies>
         <dependency>
@@ -85,6 +86,11 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20231013</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
 
         <dependency>
