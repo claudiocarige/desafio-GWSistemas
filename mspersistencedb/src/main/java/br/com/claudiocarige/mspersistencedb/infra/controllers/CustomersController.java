@@ -14,13 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 
 @Slf4j
@@ -51,6 +49,22 @@ public class CustomersController {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                                                                .buildAndExpand( customerResponseDTO.getId() ).toUri();
         return ResponseEntity.created( uri ).build();
+    }
+
+    @CrossOrigin
+    @GetMapping("/list")
+    @Operation(summary = "List All Customers", description = "List All Customers",
+            tags = {"Customers"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Customers.class))
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+            })
+    public ResponseEntity< List< CustomerResponseDTO> > listAllCustomers() {
+        List< CustomerResponseDTO > customers = customerService.listAllCustomers();
+        return ResponseEntity.ok( customers );
     }
 
 }
