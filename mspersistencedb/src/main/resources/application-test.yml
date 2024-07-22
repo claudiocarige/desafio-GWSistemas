@@ -1,7 +1,7 @@
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: ${DB_URL_POSTGRESQL}
+    url: ${DATABASE_URL}
     username: ${DB_USERNAME_POSTGRESQL}
     password: ${DB_PASSWORD_POSTGRESQL}
 
@@ -13,7 +13,7 @@ spring:
 
   flyway:
     enabled: true
-    url: ${DB_URL_POSTGRESQL}
+    url: ${DATABASE_URL}
     user: ${DB_USERNAME_POSTGRESQL}
     password: ${DB_PASSWORD_POSTGRESQL}
     locations: classpath:db/migration
