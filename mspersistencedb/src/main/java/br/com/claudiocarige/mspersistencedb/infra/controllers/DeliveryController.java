@@ -63,7 +63,9 @@ public class DeliveryController {
                     @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
                     @ApiResponse(responseCode = "404", description = "Delivery not found", content = @Content),
             })
-    public ResponseEntity< DeliveryDTO > findDeliveryById( @PathVariable Long id ) {
+    public ResponseEntity< DeliveryDTO > findDeliveryById(
+            @Parameter(description = "O ID do Delivery", required = true)
+            @PathVariable Long id ) {
 
         return ResponseEntity.ok( deliveryService.findDeliveryById( id ) );
     }
@@ -82,7 +84,9 @@ public class DeliveryController {
                     @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
                     @ApiResponse(responseCode = "404", description = "Delivery not found", content = @Content),
             })
-    public ResponseEntity< Boolean > CheckIfDeliveryIsCompleted( @PathVariable Long deliveryId ) {
+    public ResponseEntity< Boolean > CheckIfDeliveryIsCompleted(
+            @Parameter(description = "O ID do Delivery", required = true)
+            @PathVariable Long deliveryId ) {
 
         return ResponseEntity.ok( deliveryService.CheckIfDeliveryIsCompleted( deliveryId ) );
     }
@@ -119,7 +123,11 @@ public class DeliveryController {
                             }),
                     @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
             })
-    public ResponseEntity<DeliveryDTO> carryOutDelivery( @RequestParam Long deliveryId, String confirmationCode )
+    public ResponseEntity<DeliveryDTO> carryOutDelivery(
+            @Parameter(description = "O ID do Delivery", required = true)
+            @RequestParam Long deliveryId,
+            @Parameter(description = "O Código de confirmação para entrega", required = true)
+            @RequestParam String confirmationCode )
                                                                                             throws MessagingException {
 
         return ResponseEntity.ok( deliveryService.carryOutDelivery( confirmationCode, deliveryId ) );

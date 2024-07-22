@@ -1,10 +1,10 @@
 package br.com.claudiocarige.mspersistencedb.infra.controllers;
 
 
-import br.com.claudiocarige.mspersistencedb.core.domain.entities.Delivery;
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.Product;
 import br.com.claudiocarige.mspersistencedb.core.usecases.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,11 +42,14 @@ public class ProductController {
                     @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
                     @ApiResponse(responseCode = "404", description = "Not Found", content = @Content),
             })
-    public ResponseEntity< Product > findProductById( @PathVariable Long id ) {
+    public ResponseEntity< Product > findProductById(
+            @Parameter(description = "O Id do Produto", required = true)
+            @PathVariable Long id ) {
 
         return ResponseEntity.ok().body( productService.findProductById( id ) );
     }
 
+    @CrossOrigin
     @GetMapping
     @Operation(summary = "Finds All Product", description = "Finds All Product",
             tags = {"Product"},
