@@ -98,6 +98,19 @@ O projeto foi desenvolvido considerando os seguintes pontos de atenção:
    ou `/api/v1/customers/list`.
 6. Repita o processo para inserir um cliente pessoa física no endpoint `/api/v1/customers/create/pf`.
 
+**FRONTEND**
+
+* **O frontend foi construido com o framework Angular versão 16.**
+* **Foi utilizado o Angular Material para estilização dos componentes.**
+ 
+
+## DEPLOY
+  
+- O Backend da aplicação foi deployado no Heroku, utilizando o banco de dados PostgreSQL, instanciado no próprio Heroku.
+- O Frontend foi deployado no Vercel.
+- Acesse a aplicação através dos links: 
+
+
 ## Autor
 
 Cláudio Carigé
