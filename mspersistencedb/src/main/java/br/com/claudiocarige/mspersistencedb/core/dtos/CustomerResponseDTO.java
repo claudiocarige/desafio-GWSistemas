@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -28,5 +31,7 @@ public class CustomerResponseDTO {
     private String whatsapp;
 
     private String responsibleEmployee;
+
+    private List< String > emailList = new ArrayList<>();
 
 }
