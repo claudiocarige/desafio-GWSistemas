@@ -87,3 +87,24 @@ O projeto foi desenvolvido considerando os seguintes pontos de atenção:
 ## Autor
 
 Cláudio Carigé
+
+URI API  -  https://gwsistemas-43f1ae9234ad.herokuapp.com/swagger-ui/index.html
+
+ENDPOINTS :  
+             /api/v1/customers
+             /api/v1/customers/{id}
+             /api/v1/customers/create/pj
+             /api/v1/customers/list
+
+
+             /api/v1/product
+             /api/v1/product/{id}
+             /api/v1/product/save
+  
+
+             /api/v1/delivery
+             /api/v1/delivery/{id}
+             /api/v1/delivery/check-delivery/{deliveryId}
+             /api/v1/delivery/request-delivery/save
+             /api/v1/delivery/delivery-confirmation
+              
