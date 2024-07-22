@@ -7,6 +7,7 @@ import br.com.claudiocarige.mspersistencedb.core.dtos.RequestDelivery;
 import br.com.claudiocarige.mspersistencedb.core.dtos.ResponseOfSolicitation;
 import br.com.claudiocarige.mspersistencedb.core.usecases.DeliveryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping( "/api/v1/delivery" )
 @Tag(name = "Delivery", description = "Contains operations related to the request, " +
@@ -31,7 +31,8 @@ public class DeliveryController {
     @Autowired
     public DeliveryController( DeliveryService deliveryService ) { this.deliveryService = deliveryService; }
 
-    @GetMapping
+    @CrossOrigin
+    @GetMapping( "/list" )
     @Operation(summary = "Finds All Deliveries", description = "Finds All Deliveries",
             tags = {"Delivery"},
             responses = {
@@ -48,7 +49,7 @@ public class DeliveryController {
 
         return ResponseEntity.ok( deliveryService.findAllDeliveries() );
     }
-
+    @CrossOrigin
     @GetMapping( "/{id}" )
     @Operation(summary = "Find a Delivery by id", description = "Find a Delivery by id",
             tags = {"Delivery"},
@@ -91,6 +92,7 @@ public class DeliveryController {
         return ResponseEntity.ok( deliveryService.CheckIfDeliveryIsCompleted( deliveryId ) );
     }
 
+    @CrossOrigin
     @PostMapping( "/request-delivery/save" )
     @Operation(summary = "Save a new Delivery", description = "Save a new Delivery",
             tags = {"Delivery"},
@@ -110,6 +112,7 @@ public class DeliveryController {
         return ResponseEntity.ok().body( deliveryService.requestDelivery( requestDelivery ) );
     }
 
+    @CrossOrigin
     @PutMapping( "/delivery-confirmation" )
     @Operation(summary = "Delivery confirmation", description = "Delivery confirmation",
             tags = {"Delivery"},
@@ -129,7 +132,6 @@ public class DeliveryController {
             @Parameter(description = "O Código de confirmação para entrega", required = true)
             @RequestParam String confirmationCode )
                                                                                             throws MessagingException {
-
         return ResponseEntity.ok( deliveryService.carryOutDelivery( confirmationCode, deliveryId ) );
     }
 
