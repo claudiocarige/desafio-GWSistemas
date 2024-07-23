@@ -4,6 +4,7 @@ package br.com.claudiocarige.mspersistencedb.infra.controllers;
 import br.com.claudiocarige.mspersistencedb.core.domain.entities.Customers;
 import br.com.claudiocarige.mspersistencedb.core.dtos.CompanyCustomerDTO;
 import br.com.claudiocarige.mspersistencedb.core.dtos.CustomerResponseDTO;
+import br.com.claudiocarige.mspersistencedb.core.dtos.IndividualCustomerDTO;
 import br.com.claudiocarige.mspersistencedb.core.usecases.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,7 +33,7 @@ public class CustomersController {
     @Autowired
     public CustomersController( CustomerService customerService ) { this.customerService = customerService; }
 
-
+    @CrossOrigin
     @PostMapping("/create/pj")
     @Operation(summary = "Add a new CompanyCustomer", description = "Creating Company customer",
             tags = {"Customers"},
@@ -48,6 +49,25 @@ public class CustomersController {
         CustomerResponseDTO customerResponseDTO = customerService.createCompanyCustomer( companyCustomerDTO );
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                                                                .buildAndExpand( customerResponseDTO.getId() ).toUri();
+        return ResponseEntity.created( uri ).build();
+    }
+
+    @CrossOrigin
+    @PostMapping("/create/pf")
+    @Operation(summary = "Add a new Individual Customer ..", description = "Creating Individual Customer",
+            tags = {"Customers"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Customers.class))
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+            })
+    public ResponseEntity< HttpStatus > createCustomerPF( @RequestBody IndividualCustomerDTO individualCustomerDTO) {
+        log.info( "Creating Individual customer: {}", individualCustomerDTO );
+        CustomerResponseDTO customerResponseDTO = customerService.createIndividualCustomer( individualCustomerDTO );
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand( customerResponseDTO.getId() ).toUri();
         return ResponseEntity.created( uri ).build();
     }
 

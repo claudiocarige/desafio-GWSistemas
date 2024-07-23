@@ -1,9 +1,9 @@
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: ${DATABASE_URL}
-    username: ${DB_USERNAME_POSTGRESQL}
-    password: ${DB_PASSWORD_POSTGRESQL}
+    url: jdbc:postgresql://localhost:5432/productdelivery
+    username: postgres
+    password: Mklauro@2024
 
   jpa:
     hibernate:
@@ -13,9 +13,9 @@ spring:
 
   flyway:
     enabled: true
-    url: ${DATABASE_URL}
-    user: ${DB_USERNAME_POSTGRESQL}
-    password: ${DB_PASSWORD_POSTGRESQL}
+    url: jdbc:postgresql://localhost:5432/productdelivery
+    user: postgres
+    password: Mklauro@2024
     locations: classpath:db/migration
     baseline-on-migrate: true
     validate-on-migrate: false
